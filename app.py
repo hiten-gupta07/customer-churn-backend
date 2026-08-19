@@ -169,6 +169,10 @@ def predict():
                 }), 500
 
             encoder = label_encoders[col]
+
+            # Allow the column to hold the integer produced by LabelEncoder.
+            input_df[col] = input_df[col].astype(object)
+
             raw_value = str(input_df.loc[0, col]).strip()
 
             if raw_value not in encoder.classes_:
@@ -177,7 +181,8 @@ def predict():
                     "allowed_values": encoder.classes_.tolist()
                 }), 400
 
-            input_df.loc[0, col] = encoder.transform([raw_value])[0]
+            encoded_value = encoder.transform([raw_value])[0]
+            input_df.loc[0, col] = encoded_value
 
         # Convert numerical values.
         for col in numerical_cols:
